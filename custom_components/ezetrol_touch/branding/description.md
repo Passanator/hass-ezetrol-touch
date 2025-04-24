@@ -1,0 +1,1 @@
+The Ezetrol Touch integration fetches pool data (chlorine, pH, temperature) from a Wallace & Tiernan Evoqua Ezetrol Touch device. It provides sensors to monitor your pool’s water quality directly in Home Assistant.
