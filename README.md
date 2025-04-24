@@ -6,7 +6,7 @@ This integration fetches pool data (chlorine, pH, temperature) from an Ezetrol T
 
 1. Open HACS in Home Assistant.
 2. Go to **Integrations** > Click the three dots (⋮) > **Custom repositories**.
-3. Add the repository URL: `https://github.com/Watch-Software-Home-Assistant/hass-ezetrol-touch`.
+3. Add the repository URL: `https://github.com/Passanator/hass-ezetrol-touch`.
 4. Set the category to **Integration**.
 5. Click **Add**.
 6. Search for "Ezetrol Touch" in HACS and install it.
