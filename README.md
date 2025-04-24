@@ -1,2 +1,31 @@
-# hass-ezetrol-touch
-Read Chlorine, PH and Temperature from Ezetrol
+# Ezetrol Touch Integration for Home Assistant
+
+This integration fetches pool data (chlorine, pH, temperature) from an Ezetrol Touch device and exposes it as sensors in Home Assistant.
+
+## Installation via HACS
+
+1. Open HACS in Home Assistant.
+2. Go to **Integrations** > Click the three dots (⋮) > **Custom repositories**.
+3. Add the repository URL: `https://github.com/Watch-Software-Home-Assistant/hass-ezetrol-touch`.
+4. Set the category to **Integration**.
+5. Click **Add**.
+6. Search for "Ezetrol Touch" in HACS and install it.
+7. Restart Home Assistant.
+
+## Configuration
+
+1. After installing, go to **Settings > Devices & Services** in Home Assistant.
+2. Click **Add Integration** and search for "Ezetrol Touch".
+3. Enter the IP address of your Ezetrol Touch device (e.g., `192.168.1.235`).
+4. Submit the configuration to add the integration.
+
+## Sensors
+
+- `sensor.ezetrol_touch_chlorine`: Chlorine level in mg/l.
+- `sensor.ezetrol_touch_ph`: pH level.
+- `sensor.ezetrol_touch_temperature`: Temperature in °C.
+
+## Notes
+
+- The integration polls the device every 5 minutes.
+- Ensure your Home Assistant instance can access the device on your local network.
