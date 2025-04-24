@@ -16,7 +16,7 @@ This integration fetches pool data (chlorine, pH, temperature) from an Ezetrol T
 
 1. After installing, go to **Settings > Devices & Services** in Home Assistant.
 2. Click **Add Integration** and search for "Ezetrol Touch".
-3. Enter the IP address of your Ezetrol Touch device (e.g., `192.168.1.235`).
+3. Enter the IP address of your Ezetrol Touch device (e.g., `192.168.0.250`).
 4. Submit the configuration to add the integration.
 
 ## Sensors
