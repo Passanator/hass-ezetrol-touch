@@ -40,13 +40,6 @@ class EzetrolTouchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_IP_ADDRESS): str,
                 vol.Required(CONF_SCAN_INTERVAL, default=300): int,
             }),
-            description_placeholders={
-                "description": (
-                    "Enter the IP address of your Ezetrol Touch device (e.g., 192.168.1.235).\n\n"
-                    "Set the scan interval (in seconds) to define how often pool data (chlorine, pH, temperature) is updated. "
-                    "For example, 300 seconds is 5 minutes. Do not set below 60 seconds to avoid system instability."
-                )
-            },
             errors=errors,
         )
 
@@ -81,13 +74,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             default=self.config_entry.data.get(CONF_SCAN_INTERVAL),
                         ): int,
                     }),
-                    description_placeholders={
-                        "description": (
-                            "Update the IP address of your Ezetrol Touch device (e.g., 192.168.1.235).\n\n"
-                            "Set the scan interval (in seconds) to define how often pool data (chlorine, pH, temperature) is updated. "
-                            "For example, 300 seconds is 5 minutes. Do not set below 60 seconds to avoid system instability."
-                        )
-                    },
                     errors={CONF_SCAN_INTERVAL: "invalid_scan_interval"}
                 )
             return self.async_create_entry(title="", data=user_input)
@@ -105,11 +91,4 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.data.get(CONF_SCAN_INTERVAL),
                 ): int,
             }),
-            description_placeholders={
-                "description": (
-                    "Update the IP address of your Ezetrol Touch device (e.g., 192.168.1.235).\n\n"
-                    "Set the scan interval (in seconds) to define how often pool data (chlorine, pH, temperature) is updated. "
-                    "For example, 300 seconds is 5 minutes. Do not set below 60 seconds to avoid system instability."
-                )
-            },
         )
