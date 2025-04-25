@@ -28,8 +28,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     _LOGGER.debug("Fetching initial data for Ezetrol Touch")
     try:
         await coordinator.async_config_entry_first_refresh()
-    except Exception as err:
+        _LOGGER.debug("Initial data fetch successful")
+    except UpdateFailed as err:
         _LOGGER.error("Failed to fetch initial data for Ezetrol Touch: %s", err)
+        return False
+    except Exception as err:
+        _LOGGER.error("Unexpected error during initial data fetch: %s", err)
         return False
 
     # Create sensors
@@ -60,14 +64,15 @@ class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Fetch data from the Ezetrol device."""
-        _LOGGER.debug("Fetching data from Ezetrol Touch at %s", self.ip_address)
+        _LOGGER.debug("Starting data fetch from Ezetrol Touch at %s", self.ip_address)
         try:
             url = f"http://{self.ip_address}/ajax_data.json"
             _LOGGER.debug("Requesting data from URL: %s", url)
             async with async_timeout.timeout(10):
                 async with aiohttp.ClientSession() as session:
-                    async with session.get(url) as response:
+                    async with session.get(url, headers={'Accept': 'application/json'}) as response:
                         _LOGGER.debug("Received response with status: %s", response.status)
+                        _LOGGER.debug("Response headers: %s", dict(response.headers))
                         if response.status != 200:
                             raise UpdateFailed(f"Error fetching data: {response.status}")
                         # Fetch the response as text since Content-Type is text/plain
