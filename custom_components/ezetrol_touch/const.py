@@ -4,6 +4,4 @@ DOMAIN = "ezetrol_touch"
 
 # Configuration keys
 CONF_IP_ADDRESS = "ip_address"
-
-# Default update interval (5 minutes = 300 seconds)
-SCAN_INTERVAL = 300
+CONF_SCAN_INTERVAL = "scan_interval"

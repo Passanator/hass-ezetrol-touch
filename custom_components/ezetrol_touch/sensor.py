@@ -1,5 +1,6 @@
 """Platform for sensor integration with Ezetrol Touch."""
 import logging
+from datetime import timedelta
 import aiohttp
 import async_timeout
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
@@ -9,7 +10,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, CONF_IP_ADDRESS, SCAN_INTERVAL
+from .const import DOMAIN, CONF_IP_ADDRESS, CONF_SCAN_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,7 +18,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     """Set up the sensor platform from a config entry."""
     _LOGGER.debug("Setting up Ezetrol Touch sensor platform with IP: %s", entry.data[CONF_IP_ADDRESS])
     ip_address = entry.data[CONF_IP_ADDRESS]
-    coordinator = EzetrolTouchDataUpdateCoordinator(hass, ip_address)
+    scan_interval_seconds = entry.data[CONF_SCAN_INTERVAL]
+    scan_interval = timedelta(seconds=scan_interval_seconds)
+    _LOGGER.debug("Using scan interval: %s seconds", scan_interval_seconds)
+    coordinator = EzetrolTouchDataUpdateCoordinator(hass, ip_address, scan_interval)
 
     # Fetch initial data to ensure the endpoint is reachable
     _LOGGER.debug("Fetching initial data for Ezetrol Touch")
@@ -42,14 +46,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the Ezetrol device."""
 
-    def __init__(self, hass: HomeAssistant, ip_address: str):
+    def __init__(self, hass: HomeAssistant, ip_address: str, scan_interval: timedelta):
         """Initialize the coordinator."""
         self.ip_address = ip_address
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=SCAN_INTERVAL,
+            update_interval=scan_interval,
         )
         self.data = {}
 
