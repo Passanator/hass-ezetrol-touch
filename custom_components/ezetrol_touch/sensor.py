@@ -15,13 +15,20 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities):
     """Set up the sensor platform from a config entry."""
+    _LOGGER.debug("Setting up Ezetrol Touch sensor platform with IP: %s", entry.data[CONF_IP_ADDRESS])
     ip_address = entry.data[CONF_IP_ADDRESS]
     coordinator = EzetrolTouchDataUpdateCoordinator(hass, ip_address)
 
     # Fetch initial data to ensure the endpoint is reachable
-    await coordinator.async_config_entry_first_refresh()
+    _LOGGER.debug("Fetching initial data for Ezetrol Touch")
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    except Exception as err:
+        _LOGGER.error("Failed to fetch initial data for Ezetrol Touch: %s", err)
+        return False
 
     # Create sensors
+    _LOGGER.debug("Creating Ezetrol Touch sensors")
     sensors = [
         EzetrolTouchTemperatureSensor(coordinator),
         EzetrolTouchChlorineSensor(coordinator),
@@ -29,6 +36,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
     ]
 
     async_add_entities(sensors)
+    _LOGGER.info("Ezetrol Touch sensors added successfully")
+    return True
 
 class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the Ezetrol device."""
@@ -46,14 +55,18 @@ class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Fetch data from the Ezetrol device."""
+        _LOGGER.debug("Fetching data from Ezetrol Touch at %s", self.ip_address)
         try:
             url = f"http://{self.ip_address}/ajax_data.json"
+            _LOGGER.debug("Requesting data from URL: %s", url)
             async with async_timeout.timeout(10):
                 async with aiohttp.ClientSession() as session:
                     async with session.get(url) as response:
+                        _LOGGER.debug("Received response with status: %s", response.status)
                         if response.status != 200:
                             raise UpdateFailed(f"Error fetching data: {response.status}")
                         json_data = await response.json()
+                        _LOGGER.debug("Received JSON data: %s", json_data)
 
             d2 = json_data.get("d2")
             if not d2:
@@ -77,8 +90,10 @@ class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
                     data["temperature"] = parts[i + 1]
                     i += 13
 
+            _LOGGER.debug("Parsed data: %s", data)
             return data
         except Exception as err:
+            _LOGGER.error("Error fetching data from Ezetrol Touch: %s", err)
             raise UpdateFailed(f"Error communicating with Ezetrol device: {err}")
 
 class EzetrolTouchTemperatureSensor(SensorEntity):
@@ -98,19 +113,25 @@ class EzetrolTouchTemperatureSensor(SensorEntity):
             manufacturer="Wallace & Tiernan",
             model="Evoqua"
         )
+        _LOGGER.debug("Initialized temperature sensor")
 
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.coordinator.data.get("temperature")
+        state = self.coordinator.data.get("temperature")
+        _LOGGER.debug("Temperature sensor state: %s", state)
+        return state
 
     @property
     def available(self):
         """Return True if entity is available."""
-        return self.coordinator.last_update_success
+        available = self.coordinator.last_update_success
+        _LOGGER.debug("Temperature sensor available: %s", available)
+        return available
 
     async def async_update(self):
         """Update the sensor."""
+        _LOGGER.debug("Updating temperature sensor")
         await self.coordinator.async_request_refresh()
 
 class EzetrolTouchChlorineSensor(SensorEntity):
@@ -129,19 +150,25 @@ class EzetrolTouchChlorineSensor(SensorEntity):
             manufacturer="Wallace & Tiernan",
             model="Evoqua"
         )
+        _LOGGER.debug("Initialized chlorine sensor")
 
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.coordinator.data.get("chlorine")
+        state = self.coordinator.data.get("chlorine")
+        _LOGGER.debug("Chlorine sensor state: %s", state)
+        return state
 
     @property
     def available(self):
         """Return True if entity is available."""
-        return self.coordinator.last_update_success
+        available = self.coordinator.last_update_success
+        _LOGGER.debug("Chlorine sensor available: %s", available)
+        return available
 
     async def async_update(self):
         """Update the sensor."""
+        _LOGGER.debug("Updating chlorine sensor")
         await self.coordinator.async_request_refresh()
 
 class EzetrolTouchPhSensor(SensorEntity):
@@ -160,17 +187,23 @@ class EzetrolTouchPhSensor(SensorEntity):
             manufacturer="Wallace & Tiernan",
             model="Evoqua"
         )
+        _LOGGER.debug("Initialized pH sensor")
 
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.coordinator.data.get("ph")
+        state = self.coordinator.data.get("ph")
+        _LOGGER.debug("pH sensor state: %s", state)
+        return state
 
     @property
     def available(self):
         """Return True if entity is available."""
-        return self.coordinator.last_update_success
+        available = self.coordinator.last_update_success
+        _LOGGER.debug("pH sensor available: %s", available)
+        return available
 
     async def async_update(self):
         """Update the sensor."""
+        _LOGGER.debug("Updating pH sensor")
         await self.coordinator.async_request_refresh()
