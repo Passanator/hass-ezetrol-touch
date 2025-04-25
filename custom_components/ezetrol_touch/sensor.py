@@ -1,5 +1,6 @@
 """Platform for sensor integration with Ezetrol Touch."""
 import logging
+import json
 from datetime import timedelta
 import aiohttp
 import async_timeout
@@ -69,8 +70,12 @@ class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
                         _LOGGER.debug("Received response with status: %s", response.status)
                         if response.status != 200:
                             raise UpdateFailed(f"Error fetching data: {response.status}")
-                        json_data = await response.json()
-                        _LOGGER.debug("Received JSON data: %s", json_data)
+                        # Fetch the response as text since Content-Type is text/plain
+                        text_data = await response.text()
+                        _LOGGER.debug("Received text data: %s", text_data)
+                        # Manually parse the text as JSON
+                        json_data = json.loads(text_data)
+                        _LOGGER.debug("Parsed JSON data: %s", json_data)
 
             d2 = json_data.get("d2")
             if not d2:
@@ -96,6 +101,9 @@ class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
 
             _LOGGER.debug("Parsed data: %s", data)
             return data
+        except json.JSONDecodeError as err:
+            _LOGGER.error("Failed to parse response as JSON: %s", err)
+            raise UpdateFailed(f"Failed to parse response as JSON: {err}")
         except Exception as err:
             _LOGGER.error("Error fetching data from Ezetrol Touch: %s", err)
             raise UpdateFailed(f"Error communicating with Ezetrol device: {err}")
