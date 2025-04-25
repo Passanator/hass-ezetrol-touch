@@ -1,0 +1,7 @@
+{
+    "name": "Ezetrol Touch",
+    "content_in_root": false,
+    "render_readme": true,
+    "hacs": "1.0.0",
+    "homeassistant": "2023.1.0"
+  }
