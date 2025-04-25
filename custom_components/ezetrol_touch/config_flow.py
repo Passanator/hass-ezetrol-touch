@@ -40,6 +40,7 @@ class EzetrolTouchConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_IP_ADDRESS): str,
                 vol.Required(CONF_SCAN_INTERVAL, default=300): int,
             }),
+            description="user",
             errors=errors,
         )
 
@@ -74,6 +75,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                             default=self.config_entry.data.get(CONF_SCAN_INTERVAL),
                         ): int,
                     }),
+                    description="init",
                     errors={CONF_SCAN_INTERVAL: "invalid_scan_interval"}
                 )
             return self.async_create_entry(title="", data=user_input)
@@ -91,4 +93,5 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     default=self.config_entry.data.get(CONF_SCAN_INTERVAL),
                 ): int,
             }),
+            description="init",
         )
