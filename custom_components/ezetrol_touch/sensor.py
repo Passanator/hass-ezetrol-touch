@@ -76,8 +76,8 @@ class EzetrolTouchDataUpdateCoordinator(DataUpdateCoordinator):
                         if response.status != 200:
                             raise UpdateFailed(f"Error fetching data: {response.status}")
                         # Fetch the response as text since Content-Type is text/plain
-                        text_data = await response.text()
-                        _LOGGER.debug("Received text data: %s", text_data)
+                        text_data = await response.text(encoding='utf-8-sig')
+                        _LOGGER.debug("Received text data (after UTF-8-SIG decoding): %s", text_data)
                         # Manually parse the text as JSON
                         json_data = json.loads(text_data)
                         _LOGGER.debug("Parsed JSON data: %s", json_data)
@@ -144,6 +144,8 @@ class EzetrolTouchTemperatureSensor(SensorEntity):
         """Return True if entity is available."""
         available = self.coordinator.last_update_success
         _LOGGER.debug("Temperature sensor available: %s", available)
+
+
         return available
 
     async def async_update(self):
